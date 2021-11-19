@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "strict": true
+  },
+  "lint": {
+    "files": {
+      "include": [
+        "src/"
+      ]
+    },
+    "rules": {
+      "tags": [
+        "recommended"
+      ]
+    }
+  },
+  "fmt": {
+    "files": {
+      "include": [
+        "src/"
+      ]
+    },
+    "options": {
+      "useTabs": false,
+      "lineWidth": 100,
+      "indentWidth": 4,
+      "singleQuote": false
+    }
+  }
+}
