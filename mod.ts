@@ -40,3 +40,13 @@ export async function checkDomainAvailability(serviceURL: ServiceURL, domain: st
     });
 }
 
+
+
+async function resolveOrRetry<T>(f: () => Promise<T>, waitMs: number): Promise<T> {
+    try {
+        return await f();
+    } catch (_) {
+        return await sleep(waitMs).then(() => resolveOrRetry(f, waitMs));
+    }
+}
+
