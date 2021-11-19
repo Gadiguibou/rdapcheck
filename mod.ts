@@ -23,3 +23,8 @@ export function getBootstrapServiceForTLD(tld: string, bootstrapFile: BootstrapS
 export function getServiceURLs(bootstrapService: BootstrapService): ServiceURL[] {
     return bootstrapService[1];
 }
+
+export async function queryServiceForDomain(serviceURL: ServiceURL, domain: string): Promise<Response> {
+    return await fetch(`${serviceURL}domain/${domain}`);
+}
+
