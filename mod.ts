@@ -20,3 +20,6 @@ export function getBootstrapServiceForTLD(tld: string, bootstrapFile: BootstrapS
     return bootstrapFile.services.find(service => service[0].includes(tld));
 }
 
+export function getServiceURLs(bootstrapService: BootstrapService): ServiceURL[] {
+    return bootstrapService[1];
+}
