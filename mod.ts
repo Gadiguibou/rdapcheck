@@ -48,6 +48,11 @@ export async function checkDomainAvailabilityOrRetry(serviceURL: ServiceURL, dom
     return await resolveOrRetry(() => checkDomainAvailability(serviceURL, domain), waitMs);
 }
 
+export async function queryServiceForDomainsAsync(serviceURL: ServiceURL, domains: string[]): Promise<Response[]> {
+    return await Promise.all(
+        domains.map(domain => queryServiceForDomainOrRetry(serviceURL, domain))
+    );
+}
 
 
 async function resolveOrRetry<T>(f: () => Promise<T>, waitMs: number): Promise<T> {
