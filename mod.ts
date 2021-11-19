@@ -40,6 +40,10 @@ export async function checkDomainAvailability(serviceURL: ServiceURL, domain: st
     });
 }
 
+export async function queryServiceForDomainOrRetry(serviceURL: ServiceURL, domain: string, waitMs = 100): Promise<Response> {
+    return await resolveOrRetry(() => queryServiceForDomain(serviceURL, domain), waitMs);
+}
+
 
 
 async function resolveOrRetry<T>(f: () => Promise<T>, waitMs: number): Promise<T> {
