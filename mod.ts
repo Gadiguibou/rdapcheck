@@ -58,3 +58,6 @@ async function resolveOrRetry<T>(f: () => Promise<T>, waitMs: number): Promise<T
     }
 }
 
+function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
