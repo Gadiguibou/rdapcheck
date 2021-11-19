@@ -54,6 +54,12 @@ export async function queryServiceForDomainsAsync(serviceURL: ServiceURL, domain
     );
 }
 
+export async function checkDomainsAvailabilityAsync(serviceURL: ServiceURL, domains: string[]): Promise<boolean[]> {
+    return await Promise.all(
+        domains.map(domain => checkDomainAvailabilityOrRetry(serviceURL, domain))
+    );
+}
+
 
 async function resolveOrRetry<T>(f: () => Promise<T>, waitMs: number): Promise<T> {
     try {
