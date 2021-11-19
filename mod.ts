@@ -60,6 +60,29 @@ export async function checkDomainsAvailabilityAsync(serviceURL: ServiceURL, doma
     );
 }
 
+export async function queryServiceForDomainsSequential(serviceURL: ServiceURL, domains: string[]): Promise<Response[]> {
+    const results: Response[] = [];
+    return await sequentialize(
+        domains
+            .map(
+                domain =>
+                    () => queryServiceForDomain(serviceURL, domain)
+                        .then(response => { results.push(response); })
+            )
+    ).then(() => results);
+}
+
+export async function checkDomainsAvailabilitySequential(serviceURL: ServiceURL, domains: string[]): Promise<boolean[]> {
+    const results: boolean[] = [];
+    return await sequentialize(
+        domains
+            .map(
+                domain =>
+                    () => checkDomainAvailability(serviceURL, domain)
+                        .then(response => { results.push(response); })
+            )
+    ).then(() => results);
+}
 
 async function resolveOrRetry<T>(f: () => Promise<T>, waitMs: number): Promise<T> {
     try {
@@ -71,4 +94,8 @@ async function resolveOrRetry<T>(f: () => Promise<T>, waitMs: number): Promise<T
 
 function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function sequentialize(fs: (() => Promise<void>)[]): Promise<void> {
+    return fs.reduce((p, f) => p.then(f), Promise.resolve());
 }
