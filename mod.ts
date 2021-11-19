@@ -28,3 +28,15 @@ export async function queryServiceForDomain(serviceURL: ServiceURL, domain: stri
     return await fetch(`${serviceURL}domain/${domain}`);
 }
 
+export async function checkDomainAvailability(serviceURL: ServiceURL, domain: string): Promise<boolean> {
+    return await queryServiceForDomain(serviceURL, domain).then(response => {
+        if (response.ok) {
+            return false;
+        } else if (response.status === 404) {
+            return true;
+        } else {
+            throw new Error(`Unexpected status code: ${response.status}`);
+        }
+    });
+}
+
