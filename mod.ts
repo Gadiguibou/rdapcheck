@@ -11,3 +11,8 @@ export type Entry = string;
 
 export type ServiceURL = string;
 
+export async function getDNSBootstrapFile(): Promise<BootstrapServiceRegistry> {
+    const DNS_BOOTSTRAP_FILE_URL = "https://data.iana.org/rdap/dns.json";
+    return await fetch(DNS_BOOTSTRAP_FILE_URL).then(response => response.json());
+}
+
