@@ -1,8 +1,8 @@
 export type BootstrapServiceRegistry = {
-    "version": string; // e.g. "1.0"
-    "publication": string; // e.g. "YYYY-MM-DDTHH:MM:SSZ"
-    "description": string; // e.g. "Some text"
-    "services": BootstrapService[];
+    version: string; // e.g. "1.0"
+    publication: string; // e.g. "YYYY-MM-DDTHH:MM:SSZ"
+    description: string; // e.g. "Some text"
+    services: BootstrapService[];
 };
 
 export type BootstrapService = [Entry[], ServiceURL[]];
@@ -18,7 +18,7 @@ export async function getDNSBootstrapFile(): Promise<BootstrapServiceRegistry> {
 
 export function getBootstrapServiceForTLD(
     tld: string,
-    bootstrapFile: BootstrapServiceRegistry,
+    bootstrapFile: BootstrapServiceRegistry
 ): BootstrapService | undefined {
     return bootstrapFile.services.find((service) => service[0].includes(tld));
 }
@@ -29,14 +29,14 @@ export function getServiceURLs(bootstrapService: BootstrapService): ServiceURL[]
 
 export async function queryServiceForDomain(
     serviceURL: ServiceURL,
-    domain: string,
+    domain: string
 ): Promise<Response> {
     return await fetch(`${serviceURL}domain/${domain}`);
 }
 
 export async function checkDomainAvailability(
     serviceURL: ServiceURL,
-    domain: string,
+    domain: string
 ): Promise<boolean> {
     return await queryServiceForDomain(serviceURL, domain).then((response) => {
         if (response.ok) {
@@ -52,7 +52,7 @@ export async function checkDomainAvailability(
 export async function queryServiceForDomainOrRetry(
     serviceURL: ServiceURL,
     domain: string,
-    waitMs = 100,
+    waitMs = 100
 ): Promise<Response> {
     return await resolveOrRetry(() => queryServiceForDomain(serviceURL, domain), waitMs);
 }
@@ -60,62 +60,56 @@ export async function queryServiceForDomainOrRetry(
 export async function checkDomainAvailabilityOrRetry(
     serviceURL: ServiceURL,
     domain: string,
-    waitMs = 100,
+    waitMs = 100
 ): Promise<boolean> {
     return await resolveOrRetry(() => checkDomainAvailability(serviceURL, domain), waitMs);
 }
 
 export async function queryServiceForDomainsAsync(
     serviceURL: ServiceURL,
-    domains: string[],
+    domains: string[]
 ): Promise<Response[]> {
     return await Promise.all(
-        domains.map((domain) => queryServiceForDomainOrRetry(serviceURL, domain)),
+        domains.map((domain) => queryServiceForDomainOrRetry(serviceURL, domain))
     );
 }
 
 export async function checkDomainsAvailabilityAsync(
     serviceURL: ServiceURL,
-    domains: string[],
+    domains: string[]
 ): Promise<boolean[]> {
     return await Promise.all(
-        domains.map((domain) => checkDomainAvailabilityOrRetry(serviceURL, domain)),
+        domains.map((domain) => checkDomainAvailabilityOrRetry(serviceURL, domain))
     );
 }
 
 export async function queryServiceForDomainsSequential(
     serviceURL: ServiceURL,
-    domains: string[],
+    domains: string[]
 ): Promise<Response[]> {
     const results: Response[] = [];
     return await sequentialize(
-        domains
-            .map(
-                (domain) =>
-                    () =>
-                        queryServiceForDomain(serviceURL, domain)
-                            .then((response) => {
-                                results.push(response);
-                            }),
-            ),
+        domains.map(
+            (domain) => () =>
+                queryServiceForDomain(serviceURL, domain).then((response) => {
+                    results.push(response);
+                })
+        )
     ).then(() => results);
 }
 
 export async function checkDomainsAvailabilitySequential(
     serviceURL: ServiceURL,
-    domains: string[],
+    domains: string[]
 ): Promise<boolean[]> {
     const results: boolean[] = [];
     return await sequentialize(
-        domains
-            .map(
-                (domain) =>
-                    () =>
-                        checkDomainAvailability(serviceURL, domain)
-                            .then((response) => {
-                                results.push(response);
-                            }),
-            ),
+        domains.map(
+            (domain) => () =>
+                checkDomainAvailability(serviceURL, domain).then((response) => {
+                    results.push(response);
+                })
+        )
     ).then(() => results);
 }
 

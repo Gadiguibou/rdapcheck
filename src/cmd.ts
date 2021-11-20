@@ -30,8 +30,8 @@ const bootstrapServices = uniqueTlds.map((tld) => {
     return service;
 });
 
-const serviceURLs = bootstrapServices.map((bootstrapService) =>
-    mod.getServiceURLs(bootstrapService)[0]
+const serviceURLs = bootstrapServices.map(
+    (bootstrapService) => mod.getServiceURLs(bootstrapService)[0]
 );
 
 for (const [index, tld] of uniqueTlds.entries()) {
