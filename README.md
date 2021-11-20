@@ -2,7 +2,7 @@
 
 A simple RDAP library and command line tool to check the availability of a domain name.
 
-[Link to deno.land/x module page](https://deno.land/x/rdapcheck)
+This module is also available on [deno.land/x](https://deno.land/x/rdapcheck).
 
 ## Installation
 
