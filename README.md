@@ -1,6 +1,6 @@
 # rdapcheck
 
-A simple RDAP library and command-line tool to check the domain name availability in bulk.
+A simple RDAP library and command-line tool to check domain name availability in bulk.
 
 This module is also available on [deno.land/x](https://deno.land/x/rdapcheck).
 
