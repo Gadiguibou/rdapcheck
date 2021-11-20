@@ -40,6 +40,8 @@ asldkfjal.com is available
 johndoe.xyz is not available
 ```
 
+## Sources
+
 This tool was completed in one afternoon by referring to the following sources:
 
 - [ICANN RDAP overview](https://www.icann.org/rdap)
