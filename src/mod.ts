@@ -11,9 +11,9 @@ export type Entry = string;
 
 export type ServiceURL = string;
 
-export async function getDNSBootstrapFile(): Promise<BootstrapServiceRegistry> {
+export function getDNSBootstrapFile(): Promise<BootstrapServiceRegistry> {
     const DNS_BOOTSTRAP_FILE_URL = "https://data.iana.org/rdap/dns.json";
-    return await fetch(DNS_BOOTSTRAP_FILE_URL).then((response) => response.json());
+    return fetch(DNS_BOOTSTRAP_FILE_URL).then((response) => response.json());
 }
 
 export function getBootstrapServiceForTLD(
@@ -27,18 +27,12 @@ export function getServiceURLs(bootstrapService: BootstrapService): ServiceURL[]
     return bootstrapService[1];
 }
 
-export async function queryServiceForDomain(
-    serviceURL: ServiceURL,
-    domain: string
-): Promise<Response> {
-    return await fetch(`${serviceURL}domain/${domain}`);
+export function queryServiceForDomain(serviceURL: ServiceURL, domain: string): Promise<Response> {
+    return fetch(`${serviceURL}domain/${domain}`);
 }
 
-export async function checkDomainAvailability(
-    serviceURL: ServiceURL,
-    domain: string
-): Promise<boolean> {
-    return await queryServiceForDomain(serviceURL, domain).then((response) => {
+export function checkDomainAvailability(serviceURL: ServiceURL, domain: string): Promise<boolean> {
+    return queryServiceForDomain(serviceURL, domain).then((response) => {
         if (response.ok) {
             return false;
         } else if (response.status === 404) {
@@ -49,38 +43,34 @@ export async function checkDomainAvailability(
     });
 }
 
-export async function queryServiceForDomainOrRetry(
+export function queryServiceForDomainOrRetry(
     serviceURL: ServiceURL,
     domain: string,
     waitMs = 100
 ): Promise<Response> {
-    return await resolveOrRetry(() => queryServiceForDomain(serviceURL, domain), waitMs);
+    return resolveOrRetry(() => queryServiceForDomain(serviceURL, domain), waitMs);
 }
 
-export async function checkDomainAvailabilityOrRetry(
+export function checkDomainAvailabilityOrRetry(
     serviceURL: ServiceURL,
     domain: string,
     waitMs = 100
 ): Promise<boolean> {
-    return await resolveOrRetry(() => checkDomainAvailability(serviceURL, domain), waitMs);
+    return resolveOrRetry(() => checkDomainAvailability(serviceURL, domain), waitMs);
 }
 
-export async function queryServiceForDomainsAsync(
+export function queryServiceForDomainsAsync(
     serviceURL: ServiceURL,
     domains: string[]
 ): Promise<Response[]> {
-    return await Promise.all(
-        domains.map((domain) => queryServiceForDomainOrRetry(serviceURL, domain))
-    );
+    return Promise.all(domains.map((domain) => queryServiceForDomainOrRetry(serviceURL, domain)));
 }
 
-export async function checkDomainsAvailabilityAsync(
+export function checkDomainsAvailabilityAsync(
     serviceURL: ServiceURL,
     domains: string[]
 ): Promise<boolean[]> {
-    return await Promise.all(
-        domains.map((domain) => checkDomainAvailabilityOrRetry(serviceURL, domain))
-    );
+    return Promise.all(domains.map((domain) => checkDomainAvailabilityOrRetry(serviceURL, domain)));
 }
 
 export async function queryServiceForDomainsSequential(
@@ -113,12 +103,8 @@ export async function checkDomainsAvailabilitySequential(
     ).then(() => results);
 }
 
-async function resolveOrRetry<T>(f: () => Promise<T>, waitMs: number): Promise<T> {
-    try {
-        return await f();
-    } catch (_) {
-        return await sleep(waitMs).then(() => resolveOrRetry(f, waitMs));
-    }
+function resolveOrRetry<T>(f: () => Promise<T>, waitMs: number): Promise<T> {
+    return f().catch(() => sleep(waitMs).then(() => resolveOrRetry(f, waitMs)));
 }
 
 function sleep(ms: number) {
