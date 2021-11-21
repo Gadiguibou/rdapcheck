@@ -73,34 +73,20 @@ export function checkDomainsAvailabilityAsync(
     return Promise.all(domains.map((domain) => checkDomainAvailabilityOrRetry(serviceURL, domain)));
 }
 
-export async function queryServiceForDomainsSequential(
+export function queryServiceForDomainsSequential(
     serviceURL: ServiceURL,
     domains: string[]
 ): Promise<Response[]> {
-    const results: Response[] = [];
-    return await sequentialize(
-        domains.map(
-            (domain) => () =>
-                queryServiceForDomain(serviceURL, domain).then((response) => {
-                    results.push(response);
-                })
-        )
-    ).then(() => results);
+    return sequentialize(domains.map((domain) => () => queryServiceForDomain(serviceURL, domain)));
 }
 
-export async function checkDomainsAvailabilitySequential(
+export function checkDomainsAvailabilitySequential(
     serviceURL: ServiceURL,
     domains: string[]
 ): Promise<boolean[]> {
-    const results: boolean[] = [];
-    return await sequentialize(
-        domains.map(
-            (domain) => () =>
-                checkDomainAvailability(serviceURL, domain).then((response) => {
-                    results.push(response);
-                })
-        )
-    ).then(() => results);
+    return sequentialize(
+        domains.map((domain) => () => checkDomainAvailability(serviceURL, domain))
+    );
 }
 
 function resolveOrRetry<T>(f: () => Promise<T>, waitMs: number): Promise<T> {
@@ -111,6 +97,15 @@ function sleep(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function sequentialize(fs: (() => Promise<void>)[]): Promise<void> {
-    return fs.reduce((p, f) => p.then(f), Promise.resolve());
+function sequentialize<T>(fs: (() => Promise<T>)[]): Promise<T[]> {
+    const results: T[] = [];
+    return fs
+        .reduce(
+            (p, f) =>
+                p.then(f).then((response) => {
+                    results.push(response);
+                }),
+            Promise.resolve()
+        )
+        .then(() => results);
 }
