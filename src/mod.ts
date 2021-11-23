@@ -167,6 +167,15 @@ export function checkDomainsAvailabilitySequential(
     );
 }
 
+export function splitIntoChunks<T>(arr: T[], maxChunkSize: number): T[][] {
+    const result = [];
+    const numberOfChunks = Math.ceil(arr.length / maxChunkSize);
+    for (let i = 0; i < numberOfChunks; i++) {
+        result.push(arr.slice(maxChunkSize * i, maxChunkSize * (i + 1)));
+    }
+    return result;
+}
+
 function resolveOrRetry<T>(f: () => Promise<T>, waitMs: number): Promise<T> {
     return f().catch(() => sleep(waitMs).then(() => resolveOrRetry(f, waitMs)));
 }
