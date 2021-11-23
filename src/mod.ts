@@ -43,6 +43,65 @@ export function checkDomainAvailability(serviceURL: ServiceURL, domain: string):
     });
 }
 
+const ALL_POSSIBLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyz0123456789-".split("");
+const POSSIBLE_ALPHABET_CHARACTERS = "abcdefghijklmnopqrstuvwxyz".split("");
+const POSSIBLE_NUMBER_CHARACTERS = "0123456789".split("");
+
+export function findDomainNamesMatchingPattern(pattern: string): string[] {
+    // The author chose to filter out domains which are fundamentally invalid from the results
+    // to prevent reporting false positives to the user
+    return _findDomainNamesMatchingPattern(pattern).filter(
+        (domainName) =>
+            // Domain names cannot start or end with a hyphen ("-")
+            domainName.at(0) !== "-" &&
+            domainName.at(-1) !== "-" &&
+            // Domain names cannot contain consecutive hyphens ("-")
+            !domainName.includes("--") &&
+            // Domain names must only consist of the 26 letters of the ISO basic Latin alphabet
+            // in a case insensitive manner, numbers and hyphens ("-")
+            // 
+            // Since domain names are separated from their top-level domain with a period character
+            // ("."), we ignore those while checking for the validity of the domain name.
+            domainName
+                .split("")
+                .every(
+                    (char) => char === "." || ALL_POSSIBLE_CHARACTERS.includes(char.toLowerCase())
+                )
+    );
+}
+
+function _findDomainNamesMatchingPattern(pattern: string): string[] {
+    const indexOfFirstAsterisk = pattern.indexOf("*");
+    const indexOfFirstQuestionMark = pattern.indexOf("?");
+    const indexOfFirstNumberSign = pattern.indexOf("#");
+
+    const wildcardIndexes = [
+        indexOfFirstAsterisk,
+        indexOfFirstQuestionMark,
+        indexOfFirstNumberSign,
+    ];
+
+    if (Math.max(...wildcardIndexes) === -1) {
+        // No wildcard was found
+        return [pattern];
+    }
+
+    const firstWildcardIndex = Math.min(...wildcardIndexes.filter((n) => n != -1));
+    const replacementCharacters =
+        firstWildcardIndex === indexOfFirstQuestionMark
+            ? POSSIBLE_ALPHABET_CHARACTERS
+            : firstWildcardIndex === indexOfFirstNumberSign
+            ? POSSIBLE_NUMBER_CHARACTERS
+            : ALL_POSSIBLE_CHARACTERS;
+
+    // Replace the first wildcard with all possible characters that could take its place and recurse
+    return replacementCharacters.flatMap((character) =>
+        _findDomainNamesMatchingPattern(
+            replaceIndexInString(pattern, character, firstWildcardIndex)
+        )
+    );
+}
+
 export function queryServiceForDomainOrRetry(
     serviceURL: ServiceURL,
     domain: string,
@@ -108,4 +167,8 @@ function sequentialize<T>(fs: (() => Promise<T>)[]): Promise<T[]> {
             Promise.resolve()
         )
         .then(() => results);
+}
+
+function replaceIndexInString(original: string, replacement: string, index: number): string {
+    return original.substring(0, index) + replacement + original.substring(index + 1);
 }
