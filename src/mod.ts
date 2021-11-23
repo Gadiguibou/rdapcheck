@@ -105,6 +105,25 @@ function _findDomainNamesMatchingPattern(pattern: string): string[] {
 export function queryServiceForDomainOrRetry(
     serviceURL: ServiceURL,
     domain: string,
+    // The choice of 100 ms as a default for timeouts is almost arbitrary.
+    //
+    // The program was tested for performance on a ~700 queries long test set for the .net TLD
+    // with no chunks or chunks of size 50 and the following timeout settings:
+    //
+    // - 1 ms
+    // - 10 ms
+    // - 50 ms
+    // - 100 ms
+    // - 500 ms
+    // - 1000 ms
+    //
+    // Performance differences were within the margin of error for all of the timeout settings with
+    // the exception of the 1000 ms timeout tests which were slower by around 10 %.
+    //
+    // Since no conclusion could be taken from a performance point of view on the basis of these
+    // tests, the author chose 100 ms as a good middle ground between minimizing the performance
+    // impact of a failed request on a small query set and limiting unnecessary requests to the
+    // RDAP services.
     waitMs = 100
 ): Promise<Response> {
     return resolveOrRetry(() => queryServiceForDomain(serviceURL, domain), waitMs);
