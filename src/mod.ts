@@ -38,7 +38,7 @@ export function checkDomainAvailability(serviceURL: ServiceURL, domain: string):
         } else if (response.status === 404) {
             return true;
         } else {
-            throw new Error(`Unexpected status code: ${response.status}`);
+            throw response;
         }
     });
 }
