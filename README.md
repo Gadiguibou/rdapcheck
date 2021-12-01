@@ -1,10 +1,12 @@
 # rdapcheck
 
-A simple RDAP library and command-line tool to check domain name availability in bulk.
+A simple library and command-line tool to check domain name availability in bulk using the [RDAP](https://www.icann.org/rdap) protocol, a simple protocol meant to replace WHOIS.
 
 This module is also available on [deno.land/x](https://deno.land/x/rdapcheck).
 
 ## Installation
+
+### Using Deno
 
 Run once using:
 
@@ -24,13 +26,40 @@ Install the client using:
 $ deno install --allow-net https://deno.land/x/rdapcheck/cmd.ts
 ```
 
+### Manually
+
+Binary executables are available for the latest [release](https://github.com/Gadiguibou/rdapcheck/releases/latest).
+
 ## Usage
 
 ```
-rdapcheck DOMAINS...
+rdapcheck [OPTIONS] DOMAINS...
 ```
 
-## Example
+The available options are:
+
+- `-q` or `--quiet`: Only print the names of the domains that are available
+- `-p` or `--progress`: Print the number of domains processed so far
+- `-c` or `--chunk-size`: The number of domains to process in parallel. Set to 10 by default
+
+`DOMAIN` can be a domain name or a patter with wildcards that `rdapcheck` will fill in with every possible value.
+
+The available wildcards are:
+
+- `*`: Matches any letter or number character
+- `?`: Matches any letter
+- `#`: Matches any number
+
+## Examples
+
+### Check the availability of a single domain
+
+```bash
+$ rdapcheck johndoe.xyz
+johndoe.xyz is not available
+```
+
+### Check the availability of multiple domains with a single command
 
 ```bash
 $ rdapcheck aaa.net bbb.org asldkfjal.com johndoe.xyz
@@ -40,9 +69,37 @@ asldkfjal.com is available
 johndoe.xyz is not available
 ```
 
+### Only print the names of the domains that are available
+
+```bash
+$ rdapcheck -q aaa.net bbb.org asldkfjal.com johndoe.xyz
+asldkfjal.com
+```
+
+### Check the availability of all domains that match a list of patterns
+
+```bash
+$ rdapcheck -q 'ex?mple.com' 'johndoe#.net'
+exbmple.com
+excmple.com
+exdmple.com
+exfmple.com
+...
+exrmple.com
+extmple.com
+exumple.com
+johndoe0.com
+johndoe1.com
+...
+johndoe5.com
+johndoe6.com
+johndoe8.com
+johndoe9.com
+```
+
 ## Sources
 
-This tool was completed in one afternoon by referring to the following sources:
+This tool was completed over the course of one afternoon by referring to the following sources:
 
 - [ICANN RDAP overview](https://www.icann.org/rdap)
 - [ICANN lookup tool](https://lookup.icann.org/lookup)
