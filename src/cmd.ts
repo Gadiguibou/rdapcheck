@@ -87,7 +87,7 @@ const bootstrapServices = uniqueTlds.map((tld) => {
 });
 
 const serviceURLs = bootstrapServices.map(
-    (bootstrapService) => mod.getServiceURLs(bootstrapService)[0]
+    (bootstrapService) => mod.getServiceURLs(bootstrapService)[0],
 );
 
 let processedEntries = 0;
@@ -98,10 +98,9 @@ for (const [tldIndex, tld] of uniqueTlds.entries()) {
         .filter((domainTldPair) => domainTldPair[1] === tld)
         .map((domainTldPair) => domainTldPair[0]);
 
-    const domainsWithThisTldChunked =
-        options.chunkSize != 0
-            ? mod.splitIntoChunks(domainsWithThisTld, options.chunkSize)
-            : [domainsWithThisTld];
+    const domainsWithThisTldChunked = options.chunkSize != 0
+        ? mod.splitIntoChunks(domainsWithThisTld, options.chunkSize)
+        : [domainsWithThisTld];
 
     for (const [chunkIndex, chunk] of domainsWithThisTldChunked.entries()) {
         const availabilities = await mod.checkDomainsAvailabilityAsync(serviceURL, chunk);

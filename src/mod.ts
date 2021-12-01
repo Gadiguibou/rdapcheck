@@ -18,7 +18,7 @@ export function getDNSBootstrapFile(): Promise<BootstrapServiceRegistry> {
 
 export function getBootstrapServiceForTLD(
     tld: string,
-    bootstrapFile: BootstrapServiceRegistry
+    bootstrapFile: BootstrapServiceRegistry,
 ): BootstrapService | undefined {
     return bootstrapFile.services.find((service) => service[0].includes(tld));
 }
@@ -59,14 +59,14 @@ export function findDomainNamesMatchingPattern(pattern: string): string[] {
             !domainName.includes("--") &&
             // Domain names must only consist of the 26 letters of the ISO basic Latin alphabet
             // in a case insensitive manner, numbers and hyphens ("-")
-            // 
+            //
             // Since domain names are separated from their top-level domain with a period character
             // ("."), we ignore those while checking for the validity of the domain name.
             domainName
                 .split("")
                 .every(
-                    (char) => char === "." || ALL_POSSIBLE_CHARACTERS.includes(char.toLowerCase())
-                )
+                    (char) => char === "." || ALL_POSSIBLE_CHARACTERS.includes(char.toLowerCase()),
+                ),
     );
 }
 
@@ -87,17 +87,16 @@ function _findDomainNamesMatchingPattern(pattern: string): string[] {
     }
 
     const firstWildcardIndex = Math.min(...wildcardIndexes.filter((n) => n != -1));
-    const replacementCharacters =
-        firstWildcardIndex === indexOfFirstQuestionMark
-            ? POSSIBLE_ALPHABET_CHARACTERS
-            : firstWildcardIndex === indexOfFirstNumberSign
-            ? POSSIBLE_NUMBER_CHARACTERS
-            : ALL_POSSIBLE_CHARACTERS;
+    const replacementCharacters = firstWildcardIndex === indexOfFirstQuestionMark
+        ? POSSIBLE_ALPHABET_CHARACTERS
+        : firstWildcardIndex === indexOfFirstNumberSign
+        ? POSSIBLE_NUMBER_CHARACTERS
+        : ALL_POSSIBLE_CHARACTERS;
 
     // Replace the first wildcard with all possible characters that could take its place and recurse
     return replacementCharacters.flatMap((character) =>
         _findDomainNamesMatchingPattern(
-            replaceIndexInString(pattern, character, firstWildcardIndex)
+            replaceIndexInString(pattern, character, firstWildcardIndex),
         )
     );
 }
@@ -124,7 +123,7 @@ export function queryServiceForDomainOrRetry(
     // tests, the author chose 100 ms as a good middle ground between minimizing the performance
     // impact of a failed request on a small query set and limiting unnecessary requests to the
     // RDAP services.
-    waitMs = 100
+    waitMs = 100,
 ): Promise<Response> {
     return resolveOrRetry(() => queryServiceForDomain(serviceURL, domain), waitMs);
 }
@@ -132,38 +131,38 @@ export function queryServiceForDomainOrRetry(
 export function checkDomainAvailabilityOrRetry(
     serviceURL: ServiceURL,
     domain: string,
-    waitMs = 100
+    waitMs = 100,
 ): Promise<boolean> {
     return resolveOrRetry(() => checkDomainAvailability(serviceURL, domain), waitMs);
 }
 
 export function queryServiceForDomainsAsync(
     serviceURL: ServiceURL,
-    domains: string[]
+    domains: string[],
 ): Promise<Response[]> {
     return Promise.all(domains.map((domain) => queryServiceForDomainOrRetry(serviceURL, domain)));
 }
 
 export function checkDomainsAvailabilityAsync(
     serviceURL: ServiceURL,
-    domains: string[]
+    domains: string[],
 ): Promise<boolean[]> {
     return Promise.all(domains.map((domain) => checkDomainAvailabilityOrRetry(serviceURL, domain)));
 }
 
 export function queryServiceForDomainsSequential(
     serviceURL: ServiceURL,
-    domains: string[]
+    domains: string[],
 ): Promise<Response[]> {
     return sequentialize(domains.map((domain) => () => queryServiceForDomain(serviceURL, domain)));
 }
 
 export function checkDomainsAvailabilitySequential(
     serviceURL: ServiceURL,
-    domains: string[]
+    domains: string[],
 ): Promise<boolean[]> {
     return sequentialize(
-        domains.map((domain) => () => checkDomainAvailability(serviceURL, domain))
+        domains.map((domain) => () => checkDomainAvailability(serviceURL, domain)),
     );
 }
 
@@ -192,7 +191,7 @@ function sequentialize<T>(fs: (() => Promise<T>)[]): Promise<T[]> {
                 p.then(f).then((response) => {
                     results.push(response);
                 }),
-            Promise.resolve()
+            Promise.resolve(),
         )
         .then(() => results);
 }
