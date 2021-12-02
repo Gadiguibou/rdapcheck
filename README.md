@@ -4,6 +4,8 @@ A simple library and command-line tool to check domain name availability in bulk
 
 This module is also available on [deno.land/x](https://deno.land/x/rdapcheck).
 
+![Usage screenshot](https://user-images.githubusercontent.com/34945306/144460820-f193dd79-f93e-488c-800f-58a6b540e42a.png)
+
 ## Installation
 
 ### Using Deno
