@@ -48,7 +48,7 @@ The available options are:
 
 The available wildcards are:
 
-- `*`: Matches any letter or number character
+- `*`: Matches any letter, number or hyphen, "-"
 - `?`: Matches any letter
 - `#`: Matches any number
 
