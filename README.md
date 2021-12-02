@@ -44,7 +44,7 @@ The available options are:
 - `-p` or `--progress`: Print the number of domains processed so far
 - `-c` or `--chunk-size`: The number of domains to process in parallel. Set to 10 by default
 
-`DOMAIN` can be a domain name or a patter with wildcards that `rdapcheck` will fill in with every possible value.
+`DOMAIN` can be a domain name or a pattern with wildcards that `rdapcheck` will fill in with every possible value.
 
 The available wildcards are:
 
