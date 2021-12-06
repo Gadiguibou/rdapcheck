@@ -19,13 +19,13 @@ $ deno run --allow-net https://deno.land/x/rdapcheck/cmd.ts
 Compile the client into a portable executable using:
 
 ```bash
-$ deno compile --allow-net https://deno.land/x/rdapcheck/cmd.ts
+$ deno compile -o rdapcheck --allow-net https://deno.land/x/rdapcheck/cmd.ts
 ```
 
 Install the client using:
 
 ```bash
-$ deno install --allow-net https://deno.land/x/rdapcheck/cmd.ts
+$ deno install -n rdapcheck --allow-net https://deno.land/x/rdapcheck/cmd.ts
 ```
 
 ### Manually
