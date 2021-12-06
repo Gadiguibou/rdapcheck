@@ -13,19 +13,19 @@ This module is also available on [deno.land/x](https://deno.land/x/rdapcheck).
 Run once using:
 
 ```bash
-$ deno run --allow-net https://deno.land/x/rdapcheck/cmd.ts
+deno run --allow-net https://deno.land/x/rdapcheck/cmd.ts
 ```
 
 Compile the client into a portable executable using:
 
 ```bash
-$ deno compile -o rdapcheck --allow-net https://deno.land/x/rdapcheck/cmd.ts
+deno compile -o rdapcheck --allow-net https://deno.land/x/rdapcheck/cmd.ts
 ```
 
 Install the client using:
 
 ```bash
-$ deno install -n rdapcheck --allow-net https://deno.land/x/rdapcheck/cmd.ts
+deno install -n rdapcheck --allow-net https://deno.land/x/rdapcheck/cmd.ts
 ```
 
 ### Manually
