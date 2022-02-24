@@ -54,7 +54,7 @@ export function findDomainNamesMatchingPattern(pattern: string): string[] {
         (domainName) =>
             // Domain names cannot start or end with a hyphen ("-")
             domainName.at(0) !== "-" &&
-            domainName.at(-1) !== "-" &&
+            domainName.at(domainName.indexOf(".") - 1) !== "-" &&
             // Domain names cannot contain consecutive hyphens ("-")
             !domainName.includes("--") &&
             // Domain names must only consist of the 26 letters of the ISO basic Latin alphabet
